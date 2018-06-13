@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+}
+
+group 'codes.rik'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 10
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/main/demo'
+        }
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'net.java.dev.jna:jna:4.5.1'
+    compile 'org.freedesktop.gstreamer:gst1-java-core:0.9.3'
+
+    compile 'com.google.guava:guava:25.1-jre'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+
+    compile 'com.amazonaws:aws-java-sdk-core:1.11.345'
+    compile 'com.amazonaws:aws-java-sdk-kinesisvideo:1.11.255'
+    compile 'com.amazonaws:kinesisvideo-java-demo:1.0-SNAPSHOT'
+
+    testCompile 'junit:junit:4.12'
+}
+
+task runRtspDemo(type: JavaExec) {
+    dependsOn 'build'
+    systemProperty "aws.accessKeyId", findProperty('aws.accessKeyId')
+    systemProperty "aws.secretKey", findProperty('aws.secretKey')
+    classpath sourceSets.main.runtimeClasspath
+
+    main = 'codes.rik.kinesisvideo.gstreamer.demo.GStreamerRtspPublisherDemo'
+    args findProperty('streamName'), findProperty('rtspUri')
+}
+
+
